@@ -1,0 +1,4 @@
+#!/bin/bash
+
+read -p "Confirm? [Y/n] " response
+[[ -z "$response" || "${response,,}" = y* ]]
