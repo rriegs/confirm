@@ -1,4 +1,24 @@
 #!/bin/bash
 
+options=$(
+  getopt --name "$0" \
+      --options "" \
+      -- "$@" )
+
+eval set -- "$options"
+
+while :; do
+  case "$1" in
+    --)
+      shift
+      break
+      ;;
+    *)
+      echo "$0: unhandled option -- $1" >2
+      shift
+      ;;
+  esac
+done
+
 read -p "${1-Confirm? }${1:+ }[Y/n] " response
 [[ -z "$response" || "${response,,}" = y* ]]
