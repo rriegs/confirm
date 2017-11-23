@@ -4,11 +4,13 @@ options=$(
   getopt --name "$0" \
       --options "d:" \
       --longoptions "default:,no-default" \
+      --longoptions "no-any-key" \
       -- "$@" )
 
 eval set -- "$options"
 
 default="y"
+valid_glob=?*
 
 while :; do
   case "$1" in
@@ -18,6 +20,10 @@ while :; do
       ;;
     --no-default)
       default=""
+      shift
+      ;;
+    --no-any-key)
+      valid_glob=[ynYN]*
       shift
       ;;
     --)
@@ -31,7 +37,7 @@ while :; do
   esac
 done
 
-if [[ -z "$default" ]]; then
+if [[ "$default" != $valid_glob ]]; then
   selection_text="y/n"
 elif [[ "${default,,}" = y* ]]; then
   selection_text="Y/n"
@@ -41,7 +47,7 @@ fi
 
 while
   read -p "${1-Confirm? }${1:+ }[$selection_text] " response
-  [[ -z "${response:=$default}" ]]
+  [[ "${response:=$default}" != $valid_glob ]]
 do
   :
 done
