@@ -2,13 +2,20 @@
 
 options=$(
   getopt --name "$0" \
-      --options "" \
+      --options "d:" \
+      --longoptions "default:" \
       -- "$@" )
 
 eval set -- "$options"
 
+default="y"
+
 while :; do
   case "$1" in
+    -d|--default)
+      default=$2
+      shift 2
+      ;;
     --)
       shift
       break
@@ -20,5 +27,12 @@ while :; do
   esac
 done
 
-read -p "${1-Confirm? }${1:+ }[Y/n] " response
-[[ -z "$response" || "${response,,}" = y* ]]
+if [[ "${default,,}" = y* ]]; then
+  selection_text="Y/n"
+else
+  selection_text="y/N"
+fi
+
+read -p "${1-Confirm? }${1:+ }[$selection_text] " response
+response=${response:-$default}
+[[ "${response,,}" = y* ]]
